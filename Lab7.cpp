@@ -14,6 +14,10 @@ int main()
 	ball.setCenter(Vector2f(400, 300));
 	ball.setRadius(20);
 	world.AddPhysicsBody(ball);
+	
+	//Add impulse to bag
+	ball.applyImpulse(Vector2f(1, 0));
+	
 	// Create the floor
 	PhysicsRectangle floor;
 	floor.setSize(Vector2f(800, 20));
@@ -42,14 +46,30 @@ int main()
 	celing.setStatic(true);
 	world.AddPhysicsBody(celing);
 
+	//Create box
+	PhysicsRectangle box;
+	box.setSize(Vector2f(100, 200));
+	box.setCenter(Vector2f(700, 300));
+	box.setStatic(true);
+	world.AddPhysicsBody(box);
+
+
 	int thudCount(0);
 	floor.onCollision = [&thudCount](PhysicsBodyCollisionResult result) {
 		cout << "thud " << thudCount << endl;
 		thudCount++;
 		};
+
+	//Bang counter
+	int bangCount(0);
+	box.onCollision = [&bangCount](PhysicsBodyCollisionResult result) {
+		cout << "bang " << bangCount << endl;
+		bangCount++;
+		};
+
 	Clock clock;
 	Time lastTime(clock.getElapsedTime());
-	while (true) {
+	while (bangCount < 2) {
 		// calculate MS since last frame
 		Time currentTime(clock.getElapsedTime());
 		Time deltaTime(currentTime - lastTime);
@@ -62,10 +82,11 @@ int main()
 		window.draw(ball);
 		window.draw(floor);
 
-		//Draw Walls & Celing
+		//Draw Walls, Celing, & box
 		window.draw(wallLeft);
 		window.draw(wallRight);
 		window.draw(celing);
+		window.draw(box);
 
 		window.display();
 	}
